@@ -17,7 +17,7 @@ Vagrant.configure("2") do |config|
     config.vm.box_download_insecure = true
     config.vm.provider "vmware_desktop" do |v|
         v.ssh_info_public = true
-        v.gui = false
+        v.gui = true
         v.linked_clone = false
         v.vmx["ethernet0.virtualdev"] = "vmxnet3"
     end
@@ -32,6 +32,8 @@ Vagrant.configure("2") do |config|
   # accessing "localhost:8080" will access port 80 on the guest machine.
   # NOTE: This will enable public access to the opened port
   config.vm.network "forwarded_port", guest: 80, host: 5050
+  config.vm.network "forwarded_port", guest: 3001, host: 3001
+  config.vm.network "forwarded_port", guest: 8080, host: 8080
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine and only allow access
@@ -80,10 +82,11 @@ Vagrant.configure("2") do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
      apt-get update
-     apt-get install -y nginx net-tools
-     systemctl restart nginx.service
+     apt-get install -y nginx net-tools docker docker-compose fontconfig openjdk-17-jre-headless jenkins
+     systemctl restart nginx.service docker.service containerd.service
+
    SHELL
-   config.trigger.after :up do
-    system("open", "http://localhost:5050")
-  end
+  #  config.trigger.after :up do
+  #   system("open", "http://localhost:5050")
+  # end
 end
