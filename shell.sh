@@ -24,7 +24,7 @@ server {
     }
 }
 EOL
-ln -s /etc/nginx/sites-available/myapp.conf /etc/nginx/sites-enabled/myapp###
+ln -s /etc/nginx/sites-available/myapp.conf /etc/nginx/sites-enabled/myapp
 
 ###
 systemctl restart nginx
