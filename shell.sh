@@ -13,25 +13,47 @@ apt-get install -y jenkins
 ###
 systemctl restart nginx.service docker.service
 
-# NGINX config
-cat <<EOL > /etc/nginx/sites-available/myapp.conf
+# Development enviroment config
+cat <<EOL > /etc/nginx/sites-available/myapp-dev.conf
 server {
-    listen 80;
+    listen 3500;
     location / {
-        proxy_pass http://127.0.0.1:3001;
+        proxy_pass http://127.0.0.1:3500;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
     }
 }
 EOL
-ln -s /etc/nginx/sites-available/myapp.conf /etc/nginx/sites-enabled/myapp
+ln -s /etc/nginx/sites-available/myapp-dev.conf /etc/nginx/sites-enabled/
+
+# Production enviroment config
+cat <<EOL > /etc/nginx/sites-available/myapp-prod.conf
+server {
+    listen 4000;
+    location / {
+        proxy_pass http://127.0.0.1:4000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+EOL
+ln -s /etc/nginx/sites-available/myapp-prod.conf /etc/nginx/sites-enabled/
 
 ###
 systemctl restart nginx
 
 # Docker config
 usermod -aG docker $USER
+usermod -aG docker jenkins
 newgrp docker
 systemctl restart containerd.service jenkins.service
-docker pull trinhviethoang16/fe-nextjs
-docker run -d -p 3001:3000 trinhviethoang16/fe-nextjs:latest
+docker stop frontend
+docker rm frontend
+
+# Development enviroment
+docker pull trinhviethoang16/frontend:develop
+docker run -d -p 3500:3000 trinhviethoang16/frontend:develop
+
+# Production environment
+docker pull trinhviethoang16/frontend:latest
+docker run -d -p 4000:3000 trinhviethoang16/frontend:latest

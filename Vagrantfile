@@ -32,7 +32,8 @@ Vagrant.configure("2") do |config|
   # accessing "localhost:8080" will access port 80 on the guest machine.
   # NOTE: This will enable public access to the opened port
   config.vm.network "forwarded_port", guest: 80, host: 5050
-  config.vm.network "forwarded_port", guest: 3001, host: 3001
+  config.vm.network "forwarded_port", guest: 3500, host: 3500
+  config.vm.network "forwarded_port", guest: 4000, host: 4000
   config.vm.network "forwarded_port", guest: 8080, host: 8080
 
   # Create a forwarded port mapping which allows access to a specific port
@@ -66,19 +67,20 @@ Vagrant.configure("2") do |config|
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
   #
-  # config.vm.provider "virtualbox" do |vb|
-  #   # Display the VirtualBox GUI when booting the machine
-  #   vb.gui = true
-  #
-  #   # Customize the amount of memory on the VM:
-  #   vb.memory = "1024"
-  # end
+  config.vm.provider "virtualbox" do |vb|
+    # Display the VirtualBox GUI when booting the machine
+    vb.gui = true
+  
+    # Customize the amount of memory on the VM:
+    vb.memory = "2048"
+    vb.cpus = "4"
+  end
   #
   # View the documentation for the provider you are using for more
   # information on available options.
-
   # Enable provisioning with a shell script. Additional provisioners such as
   # Ansible, Chef, Docker, Puppet and Salt are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", path: "shell.sh"
+  
 end
