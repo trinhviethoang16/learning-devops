@@ -11,7 +11,7 @@ apt-get update
 apt-get install -y jenkins
 
 ###
-systemctl restart nginx.service docker.service
+systemctl restart docker.service
 
 # Development enviroment config
 cat <<EOL > /etc/nginx/sites-available/myapp-dev.conf
