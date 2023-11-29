@@ -15,11 +15,13 @@ Vagrant.configure("2") do |config|
   config.vm.box = "starboard/ubuntu-arm64-20.04.5"
     config.vm.box_version = "20221120.20.40.0"
     config.vm.box_download_insecure = true
-    config.vm.provider "vmware_desktop" do |v|
-        v.ssh_info_public = true
-        v.gui = true
-        v.linked_clone = false
-        v.vmx["ethernet0.virtualdev"] = "vmxnet3"
+    config.vm.provider "vmware_desktop" do |vm|
+        vm.ssh_info_public = true
+        vm.gui = true
+        vm.linked_clone = false
+        vm.vmx["ethernet0.virtualdev"] = "vmxnet3"
+        vm.memory = "2048"
+        vm.cpus = "4"
     end
 
   # Disable automatic box update checking. If you disable this, then
@@ -34,12 +36,12 @@ Vagrant.configure("2") do |config|
   
   # NGINX
   config.vm.network "forwarded_port", guest: 80, host: 5050
+  # Jenkins
+  config.vm.network "forwarded_port", guest: 8080, host: 8080
   # Development
   config.vm.network "forwarded_port", guest: 3500, host: 3500
   # Production
   config.vm.network "forwarded_port", guest: 4000, host: 4000
-  # Jenkins
-  config.vm.network "forwarded_port", guest: 8080, host: 8080
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine and only allow access
@@ -72,14 +74,14 @@ Vagrant.configure("2") do |config|
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
   #
-  config.vm.provider "virtualbox" do |vb|
+  # config.vm.provider "virtualbox" do |vb|
     # Display the VirtualBox GUI when booting the machine
-    vb.gui = true
+    # vb.gui = true
   
     # Customize the amount of memory on the VM:
-    vb.memory = "2048"
-    vb.cpus = "4"
-  end
+    # vb.memory = "2048"
+    # vb.cpus = "4"
+  # end
   #
   # View the documentation for the provider you are using for more
   # information on available options.
@@ -87,5 +89,4 @@ Vagrant.configure("2") do |config|
   # Ansible, Chef, Docker, Puppet and Salt are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", path: "shell.sh"
-  
 end
