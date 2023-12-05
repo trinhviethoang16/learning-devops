@@ -71,3 +71,22 @@ docker run -d -p 4000:3000 trinhviethoang16/frontend:latest
 
 # MongoDB config
 mongosh --eval "db = db.getSiblingDB('user'); db.createUser({user: 'user1', pwd: 'password1', roles: [{role: 'readWrite', db: 'user'}]}); db.createUser({user: 'user2', pwd: 'password2', roles: [{role: 'readWrite', db: 'user'}]}); db.adminCommand({createUser: 'admin1', pwd: 'adminpassword', roles: [{role: 'userAdminAnyDatabase', db: 'admin'}]});"
+mongosh --eval "db = db.getSiblingDB('product'); for(let i = 1; i <= 5; i++) db.item.insert({item: 'item' + i, value: 100});"
+mongosh --eval "db = db.getSiblingDB('company'); 
+                db.projects.insertMany([
+                    { name: 'Project AlApha', status: 'Active', budget: 100000, startDate: new Date('2023-01-01'), endDate: new Date('2023-01-01'), teamSize: 3 },
+                    { name: 'Project Beta', status: 'Planning', budget: 75000, startDate: new Date('2023-03-15'), endDate: new Date('2023-01-02'), teamSize: 5 },
+                    { name: 'Project Gamma', status: 'Completed', budget: 50000, startDate: new Date('2022-06-01'), endDate: new Date('2023-01-03'), teamSize: 4 },
+                    { name: 'Project Delta', status: 'Active', budget: 120000, startDate: new Date('2023-02-20'), endDate: new Date('2023-01-04'), teamSize: 6 },
+                    { name: 'Project Epsilon', status: 'On Hold', budget: 60000, startDate: new Date('2023-04-01'), endDate: new Date('2023-01-05'), teamSize: 2 }
+                ]);"
+
+# Dump and Restore data
+mongodump --db product --out /vagrant/data/dump/
+# mongorestore --db product /vagrant/data/dump/product
+
+# Backup data for company database
+BACKUP_DIR="/vagrant/data/backup/"
+DATE=`date +%Y-%m-%d`
+mongodump --db company --out $BACKUP_DIR"company_$DATE"
+# mongorestore --db company $BACKUP_DIR"company_$DATE/company"
